@@ -1,0 +1,1173 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>OOP en C++ – Taller Comparativo</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #0f1117;
+                --bg2: #181b24;
+                --bg3: #1e2230;
+                --border: #2a2f42;
+                --border2: #353c54;
+                --text: #e8eaf0;
+                --text2: #9098b4;
+                --text3: #5c6480;
+                --accent: #7c6af7;
+                --accent2: #a99df9;
+                --green: #3ecf8e;
+                --green2: #1a8c5e;
+                --green-bg: #0d2e20;
+                --orange: #f79c42;
+                --orange-bg: #2e1f0a;
+                --red: #f78c6c;
+                --red-bg: #2e0f0f;
+                --blue: #5ba8f5;
+                --blue-bg: #0d1e33;
+                --mono: "JetBrains Mono", monospace;
+                --sans: "Sora", sans-serif;
+            }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                font-family: var(--sans);
+                background: var(--bg);
+                color: var(--text);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            header {
+                background: var(--bg2);
+                border-bottom: 1px solid var(--border);
+                padding: 0 2rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 60px;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+            .logo {
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--accent2);
+                letter-spacing: -0.02em;
+            }
+            .logo span {
+                color: var(--text2);
+                font-weight: 400;
+            }
+            .progress-bar {
+                height: 2px;
+                background: var(--border);
+                border-radius: 1px;
+                width: 160px;
+                overflow: hidden;
+            }
+            .progress-fill {
+                height: 100%;
+                background: var(--accent);
+                border-radius: 1px;
+                transition: width 0.3s ease;
+            }
+            .main-layout {
+                display: flex;
+                flex: 1;
+                min-height: 0;
+            }
+            .sidebar {
+                width: 260px;
+                background: var(--bg2);
+                border-right: 1px solid var(--border);
+                padding: 1.5rem 0;
+                flex-shrink: 0;
+                overflow-y: auto;
+            }
+            .sidebar-label {
+                font-size: 10px;
+                font-weight: 600;
+                color: var(--text3);
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                padding: 0 1.25rem;
+                margin-bottom: 0.75rem;
+            }
+            .nav-item {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 0.6rem 1.25rem;
+                cursor: pointer;
+                transition: background 0.15s;
+                border-left: 2px solid transparent;
+            }
+            .nav-item:hover {
+                background: var(--bg3);
+            }
+            .nav-item.active {
+                background: rgba(124, 106, 247, 0.1);
+                border-left-color: var(--accent);
+            }
+            .nav-num {
+                width: 22px;
+                height: 22px;
+                border-radius: 6px;
+                background: var(--bg3);
+                font-size: 11px;
+                font-weight: 600;
+                color: var(--text2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                font-family: var(--mono);
+            }
+            .nav-item.active .nav-num {
+                background: var(--accent);
+                color: white;
+            }
+            .nav-text {
+                font-size: 13px;
+                color: var(--text2);
+                line-height: 1.3;
+            }
+            .nav-item.active .nav-text {
+                color: var(--text);
+            }
+            .content {
+                flex: 1;
+                overflow-y: auto;
+                padding: 2rem;
+                max-width: 960px;
+            }
+            .module-header {
+                margin-bottom: 1.5rem;
+            }
+            .module-tag {
+                font-size: 11px;
+                font-weight: 600;
+                color: var(--accent);
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                margin-bottom: 0.4rem;
+            }
+            .module-title {
+                font-size: 24px;
+                font-weight: 700;
+                color: var(--text);
+                letter-spacing: -0.02em;
+            }
+            .module-desc {
+                font-size: 14px;
+                color: var(--text2);
+                margin-top: 0.5rem;
+                line-height: 1.6;
+            }
+            .compare-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            .pane {
+                border-radius: 12px;
+                border: 1px solid var(--border);
+                overflow: hidden;
+            }
+            .pane-header {
+                padding: 0.6rem 1rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                border-bottom: 1px solid var(--border);
+            }
+            .pane-struct .pane-header {
+                background: var(--orange-bg);
+            }
+            .pane-oop .pane-header {
+                background: var(--green-bg);
+            }
+            .pane-badge {
+                font-size: 10px;
+                font-weight: 700;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                padding: 2px 7px;
+                border-radius: 4px;
+            }
+            .pane-struct .pane-badge {
+                background: rgba(247, 156, 66, 0.2);
+                color: var(--orange);
+            }
+            .pane-oop .pane-badge {
+                background: rgba(62, 207, 142, 0.2);
+                color: var(--green);
+            }
+            .pane-label {
+                font-size: 12px;
+                color: var(--text2);
+            }
+            .pane-body {
+                background: var(--bg);
+            }
+            pre {
+                font-family: var(--mono);
+                font-size: 12px;
+                line-height: 1.7;
+                padding: 1rem;
+                overflow-x: auto;
+                color: var(--text);
+                white-space: pre;
+            }
+            .kw {
+                color: #c792ea;
+            }
+            .ty {
+                color: #82aaff;
+            }
+            .st {
+                color: #c3e88d;
+            }
+            .cm {
+                color: #546e7a;
+                font-style: italic;
+            }
+            .fn {
+                color: #82aaff;
+            }
+            .nu {
+                color: #f78c6c;
+            }
+            .key-concepts {
+                background: var(--bg2);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 1.25rem;
+                margin-bottom: 1.5rem;
+            }
+            .key-title {
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--text3);
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                margin-bottom: 0.75rem;
+            }
+            .key-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .key-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                font-size: 13px;
+                color: var(--text2);
+                line-height: 1.5;
+            }
+            .key-dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--accent);
+                flex-shrink: 0;
+                margin-top: 5px;
+            }
+            .key-item code {
+                font-family: var(--mono);
+                font-size: 11px;
+                background: var(--bg3);
+                padding: 1px 5px;
+                border-radius: 4px;
+                color: var(--accent2);
+            }
+            .diff-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            .diff-cell {
+                font-size: 12px;
+                font-family: var(--mono);
+                padding: 0.5rem 0.75rem;
+                border-radius: 8px;
+                line-height: 1.5;
+            }
+            .diff-cell.bad {
+                background: var(--orange-bg);
+                color: #f78c6c;
+            }
+            .diff-cell.good {
+                background: var(--green-bg);
+                color: #80e0b0;
+            }
+            .diff-label {
+                font-size: 10px;
+                font-weight: 600;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                margin-bottom: 0.4rem;
+                color: var(--text3);
+            }
+            .nav-btns {
+                display: flex;
+                gap: 0.75rem;
+                margin-top: 1.5rem;
+            }
+            .btn {
+                padding: 0.5rem 1.25rem;
+                border-radius: 8px;
+                font-family: var(--sans);
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                border: none;
+                transition: all 0.15s;
+            }
+            .btn-outline {
+                background: transparent;
+                border: 1px solid var(--border2);
+                color: var(--text2);
+            }
+            .btn-outline:hover {
+                background: var(--bg3);
+                color: var(--text);
+            }
+            .btn-primary {
+                background: var(--accent);
+                color: white;
+            }
+            .btn-primary:hover {
+                background: var(--accent2);
+            }
+            .uml-box {
+                background: var(--bg2);
+                border: 1px solid var(--border2);
+                border-radius: 10px;
+                overflow: hidden;
+                display: inline-block;
+                min-width: 200px;
+            }
+            .uml-title {
+                background: var(--bg3);
+                border-bottom: 1px solid var(--border2);
+                padding: 6px 12px;
+                font-family: var(--mono);
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--accent2);
+                text-align: center;
+            }
+            .uml-section {
+                padding: 8px 12px;
+                border-bottom: 1px solid var(--border);
+            }
+            .uml-section:last-child {
+                border-bottom: none;
+            }
+            .uml-item {
+                font-family: var(--mono);
+                font-size: 11.5px;
+                color: var(--text2);
+                padding: 1px 0;
+            }
+            .uml-item .priv {
+                color: var(--red);
+            }
+            .uml-item .pub {
+                color: var(--green);
+            }
+            .uml-item .name {
+                color: var(--text);
+            }
+            .uml-item .type {
+                color: var(--blue);
+            }
+            .uml-row {
+                display: flex;
+                gap: 2rem;
+                align-items: flex-start;
+                margin-bottom: 1rem;
+            }
+            .uml-arrow {
+                display: flex;
+                align-items: center;
+                padding-top: 60px;
+                color: var(--text3);
+                font-size: 22px;
+            }
+            @media (max-width: 720px) {
+                .compare-grid {
+                    grid-template-columns: 1fr;
+                }
+                .diff-row {
+                    grid-template-columns: 1fr;
+                }
+                .sidebar {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="logo">OOP en C++ <span>— Taller Comparativo</span></div>
+            <div style="display: flex; align-items: center; gap: 10px">
+                <span
+                    style="font-size: 12px; color: var(--text3)"
+                    id="prog-label"
+                    >1 / 8</span
+                >
+                <div class="progress-bar">
+                    <div
+                        class="progress-fill"
+                        id="prog-fill"
+                        style="width: 12.5%"
+                    ></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <nav class="sidebar">
+                <div class="sidebar-label">Módulos</div>
+                <div id="nav-items"></div>
+            </nav>
+            <main class="content" id="content"></main>
+        </div>
+
+        <script>
+            const modules = [
+                {
+                    tag: "Módulo 1",
+                    title: "Introducción a OOP",
+                    desc: "Diferencia entre programación estructurada y OOP. El mismo problema (modelar una Persona) resuelto de dos formas.",
+                    concepts: [
+                        {
+                            text: "En la programación estructurada, los datos y las funciones viven <strong>separados</strong>.",
+                        },
+                        {
+                            text: "En OOP, los datos (atributos) y las funciones que los manipulan (métodos) viven <strong>juntos</strong> en una clase.",
+                        },
+                        {
+                            text: "Un <code>objeto</code> es una instancia concreta de una clase — es el 'individuo' real.",
+                        },
+                        {
+                            text: "La clase es el <strong>molde</strong>; el objeto es lo que se fabrica con ese molde.",
+                        },
+                    ],
+                    diffs: [
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "presentarPersona(p);  // función externa",
+                            good: "obj.presentar();  // método del objeto",
+                        },
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: 'p.nombre = "Ana";  // acceso directo',
+                            good: 'obj.nombre = "Ana";  // misma sintaxis',
+                        },
+                    ],
+                    structCode: `<span class="kw">struct</span> <span class="ty">PersonaStruct</span> {
+  <span class="ty">std</span>::<span class="ty">string</span> nombre;
+  <span class="ty">int</span> edad;
+};
+
+<span class="cm">// Función SEPARADA del dato</span>
+<span class="ty">void</span> <span class="fn">presentar</span>(<span class="ty">PersonaStruct</span> p) {
+   <span class="ty">std</span>::cout &lt;&lt; p.nombre &lt;&lt; <span class="st">" – "</span> &lt;&lt; p.edad &lt;&lt; <span class="st">" años\\n"</span>;
+}
+
+<span class="ty">bool</span> <span class="fn">esMayor</span>(<span class="ty">PersonaStruct</span> p) {
+  <span class="kw">return</span> p.edad &gt;= <span class="nu">18</span>;
+}
+
+<span class="cm">// Uso</span>
+<span class="ty">PersonaStruct</span> ps;
+ps.nombre = <span class="st">"Ana"</span>;
+ps.edad = <span class="nu">20</span>;
+<span class="fn">presentar</span>(ps);  <span class="cm">// hay que pasar el dato</span>`,
+                    oopCode: `<span class="kw">class</span> <span class="ty">Persona</span> {
+<span class="kw">public</span>:
+  <span class="cm">// Atributos y métodos JUNTOS</span>
+  <span class="ty">std</span>::<span class="ty">string</span> nombre;
+  <span class="ty">int</span> edad;
+
+  <span class="ty">void</span> <span class="fn">presentar</span>() {
+     <span class="ty">std</span>::cout &lt;&lt; nombre &lt;&lt; <span class="st">" – "</span> &lt;&lt; edad &lt;&lt; <span class="st">" años\\n"</span>;
+  }
+
+  <span class="ty">bool</span> <span class="fn">esMayor</span>() {
+    <span class="kw">return</span> edad &gt;= <span class="nu">18</span>;
+  }
+};
+
+<span class="cm">// Uso</span>
+<span class="ty">Persona</span> obj;
+obj.nombre = <span class="st">"Ana"</span>;
+obj.edad = <span class="nu">20</span>;
+obj.<span class="fn">presentar</span>();  <span class="cm">// el objeto "sabe" qué hacer</span>`,
+                },
+                {
+                    tag: "Módulo 2",
+                    title: "Clases y Objetos",
+                    desc: "Definición de clase con atributos y métodos. Creación de múltiples objetos independientes. Acceso a miembros con punto.",
+                    concepts: [
+                        {
+                            text: "La <strong>clase</strong> es la definición (molde); el <strong>objeto</strong> es la instancia en memoria.",
+                        },
+                        {
+                            text: "Cada objeto tiene su <strong>propia copia</strong> de los atributos — son independientes.",
+                        },
+                        {
+                            text: "Los métodos se llaman con el operador <code>.</code> sobre el objeto: <code>obj.metodo()</code>.",
+                        },
+                        {
+                            text: "Varios objetos pueden crearse del mismo molde: <code>CuentaBancaria c1, c2;</code>",
+                        },
+                    ],
+                    diffs: [
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "depositarStruct(cs, 500);  // función suelta",
+                            good: "cuenta.depositar(500);  // pertenece al objeto",
+                        },
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "CuentaStruct cs;  cs.titular = ...;  // sin organización",
+                            good: "CuentaBancaria c;  c.titular = ...;  // todo en la clase",
+                        },
+                    ],
+                    uml: {
+                        name: "CuentaBancaria",
+                        attrs: [
+                            { vis: "+", name: "titular", type: "std::string" },
+                            { vis: "+", name: "saldo", type: "double" },
+                        ],
+                        methods: [
+                            {
+                                vis: "+",
+                                name: "depositar(monto)",
+                                type: "void",
+                            },
+                            { vis: "+", name: "retirar(monto)", type: "void" },
+                            { vis: "+", name: "mostrar()", type: "void" },
+                        ],
+                    },
+                    structCode: `<span class="kw">struct</span> <span class="ty">CuentaStruct</span> {
+  <span class="ty">std</span>::<span class="ty">string</span> titular;
+  <span class="ty">double</span> saldo;
+};
+
+<span class="ty">void</span> <span class="fn">depositar</span>(<span class="ty">CuentaStruct</span> &amp;c, <span class="ty">double</span> m) {
+  <span class="kw">if</span> (m &gt; <span class="nu">0</span>) c.saldo += m;
+}
+
+<span class="ty">void</span> <span class="fn">mostrar</span>(<span class="ty">CuentaStruct</span> c) {
+   <span class="ty">std</span>::cout &lt;&lt; c.titular &lt;&lt; <span class="st">" $"</span> &lt;&lt; c.saldo;
+}`,
+                    oopCode: `<span class="kw">class</span> <span class="ty">CuentaBancaria</span> {
+<span class="kw">public</span>:
+  <span class="ty">std</span>::<span class="ty">string</span> titular;
+  <span class="ty">double</span> saldo;
+
+  <span class="ty">void</span> <span class="fn">depositar</span>(<span class="ty">double</span> m) {
+    <span class="kw">if</span> (m &gt; <span class="nu">0</span>) saldo += m;
+  }
+
+  <span class="ty">void</span> <span class="fn">retirar</span>(<span class="ty">double</span> m) {
+    <span class="kw">if</span> (m &gt; <span class="nu">0</span> &amp;&amp; m &lt;= saldo)
+      saldo -= m;
+  }
+
+  <span class="ty">void</span> <span class="fn">mostrar</span>() {
+     <span class="ty">std</span>::cout &lt;&lt; titular &lt;&lt; <span class="st">" $"</span> &lt;&lt; saldo;
+  }
+};
+
+<span class="ty">CuentaBancaria</span> c1, c2;  <span class="cm">// 2 objetos</span>
+c1.depositar(<span class="nu">500</span>);  c2.depositar(<span class="nu">200</span>);`,
+                },
+                {
+                    tag: "Módulo 3",
+                    title: "Constructores y Destructores",
+                    desc: "El constructor inicializa el objeto automáticamente al crearlo. El destructor limpia recursos al destruirlo.",
+                    concepts: [
+                        {
+                            text: "El <strong>constructor</strong> tiene el mismo nombre que la clase y NO tiene tipo de retorno.",
+                        },
+                        {
+                            text: "Se ejecuta <strong>automáticamente</strong> al crear el objeto — no hay que llamarlo.",
+                        },
+                        {
+                            text: "Se puede tener <strong>varios constructores</strong> con distintos parámetros (sobrecarga).",
+                        },
+                        {
+                            text: "El <strong>destructor</strong> comienza con <code>~</code> y se llama automáticamente al destruir el objeto.",
+                        },
+                    ],
+                    diffs: [
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "inicializarProducto(p, 'Lápiz', 1.25, 100);  // manual, olvidable",
+                            good: 'Producto p("Lápiz", 1.25, 100);  // automático al crear',
+                        },
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "// si olvidamos inicializar → datos basura",
+                            good: "// el constructor GARANTIZA inicialización correcta",
+                        },
+                    ],
+                    structCode: `<span class="kw">struct</span> <span class="ty">ProductoStruct</span> {
+  <span class="ty">std</span>::<span class="ty">string</span> nombre;
+  <span class="ty">double</span> precio;
+  <span class="ty">int</span>    cantidad;
+};
+
+<span class="cm">// Hay que inicializar manualmente</span>
+<span class="ty">void</span> <span class="fn">init</span>(<span class="ty">ProductoStruct</span> &amp;p,
+           <span class="ty">std</span>::<span class="ty">string</span> n, <span class="ty">double</span> pr, <span class="ty">int</span> c) {
+  p.nombre   = n;
+  p.precio   = pr;
+  p.cantidad = c;
+}
+
+<span class="ty">ProductoStruct</span> ps;
+<span class="fn">init</span>(ps, <span class="st">"Cuaderno"</span>, <span class="nu">3.50</span>, <span class="nu">50</span>);
+<span class="cm">// Si olvidamos llamar init → ¡basura!</span>`,
+                    oopCode: `<span class="kw">class</span> <span class="ty">Producto</span> {
+<span class="kw">public</span>:
+  <span class="ty">std</span>::<span class="ty">string</span> nombre;
+  <span class="ty">double</span> precio;
+  <span class="ty">int</span>    cantidad;
+
+  <span class="cm">// Constructor por defecto</span>
+  <span class="fn">Producto</span>() {
+    nombre = <span class="st">"Sin nombre"</span>;
+    precio = <span class="nu">0</span>;
+    <span class="ty">std</span>::cout &lt;&lt; <span class="st">"[Constructor]"</span>;
+  }
+
+  <span class="cm">// Constructor con parámetros</span>
+  <span class="fn">Producto</span>(<span class="ty">std</span>::<span class="ty">string</span> n, <span class="ty">double</span> p, <span class="ty">int</span> c)
+    : nombre(n), precio(p), cantidad(c) {}
+
+  <span class="cm">// Destructor</span>
+  ~<span class="fn">Producto</span>() {
+     <span class="ty">std</span>::cout &lt;&lt; <span class="st">"[Destructor] "</span> &lt;&lt; nombre;
+  }
+};
+
+<span class="ty">Producto</span> p1;                        <span class="cm">// defecto</span>
+<span class="ty">Producto</span> p2(<span class="st">"Lápiz"</span>, <span class="nu">1.25</span>, <span class="nu">100</span>);  <span class="cm">// params</span>`,
+                },
+                {
+                    tag: "Módulo 4",
+                    title: "Encapsulación",
+                    desc: "Uso de private y public. Getters y setters. Proteger datos de valores inválidos.",
+                    concepts: [
+                        {
+                            text: "<code>private</code>: solo los métodos de la propia clase pueden acceder al atributo.",
+                        },
+                        {
+                            text: "<code>public</code>: accesible desde cualquier parte del programa.",
+                        },
+                        {
+                            text: "Un <strong>getter</strong> devuelve el valor de un atributo privado (solo lectura).",
+                        },
+                        {
+                            text: "Un <strong>setter</strong> modifica el atributo con validación — rechaza valores inválidos.",
+                        },
+                    ],
+                    diffs: [
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "ts.celsius = -500;  // nadie lo impide",
+                            good: "t.setCelsius(-500);  // rechazado por validación",
+                        },
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "// sin private → cualquiera puede corromper datos",
+                            good: "// private → la clase PROTEGE su propio estado",
+                        },
+                    ],
+                    structCode: `<span class="kw">struct</span> <span class="ty">TemperaturaStruct</span> {
+  <span class="ty">double</span> celsius;  <span class="cm">// acceso libre</span>
+};
+
+<span class="ty">void</span> <span class="fn">setTemp</span>(<span class="ty">TemperaturaStruct</span> &amp;t, <span class="ty">double</span> c){
+  <span class="kw">if</span> (c &gt;= <span class="nu">-273.15</span>) t.celsius = c;
+}
+
+<span class="ty">TemperaturaStruct</span> ts;
+ts.celsius = <span class="nu">-500</span>;  <span class="cm">// INVÁLIDO aceptado</span>
+<span class="cm">// no hay forma de forzar validación</span>`,
+                    oopCode: `<span class="kw">class</span> <span class="ty">Temperatura</span> {
+<span class="kw">private</span>:
+  <span class="ty">double</span> celsius;  <span class="cm">// nadie de fuera puede tocarlo</span>
+
+<span class="kw">public</span>:
+  <span class="fn">Temperatura</span>(<span class="ty">double</span> c = <span class="nu">20.0</span>) { <span class="fn">setCelsius</span>(c); }
+
+  <span class="ty">void</span> <span class="fn">setCelsius</span>(<span class="ty">double</span> c) {
+    <span class="kw">if</span> (c &gt;= <span class="nu">-273.15</span>) celsius = c;
+    <span class="kw">else</span>  <span class="ty">std</span>::cout &lt;&lt; <span class="st">"Valor rechazado"</span>;
+  }
+
+  <span class="ty">double</span> <span class="fn">getCelsius</span>()    { <span class="kw">return</span> celsius; }
+  <span class="ty">double</span> <span class="fn">getKelvin</span>()     { <span class="kw">return</span> celsius + <span class="nu">273.15</span>; }
+  <span class="ty">double</span> <span class="fn">getFahrenheit</span>() { <span class="kw">return</span> celsius*<span class="nu">9</span>/<span class="nu">5</span>+<span class="nu">32</span>; }
+};
+
+<span class="cm">// t.celsius = -500;  ← ERROR de compilación</span>
+t.<span class="fn">setCelsius</span>(<span class="nu">-500</span>);   <span class="cm">// rechazado con mensaje</span>`,
+                },
+                {
+                    tag: "Módulo 5",
+                    title: "Métodos de clase",
+                    desc: "Métodos normales, paso de parámetros, métodos inline. Calculadora de áreas de figuras.",
+                    concepts: [
+                        {
+                            text: "Los métodos de una clase acceden a los atributos <strong>directamente</strong> — no necesitan recibirlos como parámetro.",
+                        },
+                        {
+                            text: "Un método definido <strong>en linea</strong> está definido dentro del cuerpo de la clase.",
+                        },
+                        {
+                            text: "Separar las definiciones de las declaraciones ayuda a organizar el proyecto en archivos <code>.hpp</code> y <code>.cpp</code>",
+                        },
+                        {
+                            text: "Cada clase agrupa la lógica relacionada: <code>Circulo</code> sabe calcular su propia área.",
+                        },
+                    ],
+                    diffs: [
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "areaCirculo(radio);  // hay que recordar qué función usar",
+                            good: "circ.area();  // el objeto ya sabe cómo calcularlo",
+                        },
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "// 4 funciones sueltas",
+                            good: "// 1 clase = atributos + métodos organizados",
+                        },
+                    ],
+                    structCode: `<span class="cm">// Funciones sueltas en espacio global</span>
+<span class="ty">double</span> <span class="fn">areaRect</span>(<span class="ty">double</span> b, <span class="ty">double</span> h) {
+  <span class="kw">return</span> b * h;
+}
+<span class="ty">double</span> <span class="fn">areaCirculo</span>(<span class="ty">double</span> r) {
+  <span class="kw">return</span> M_PI * r * r;
+}
+<span class="ty">double</span> <span class="fn">perimetroRect</span>(<span class="ty">double</span> b, <span class="ty">double</span> h) {
+  <span class="kw">return</span> <span class="nu">2</span> * (b + h);
+}
+<span class="ty">double</span> <span class="fn">perimetroCirculo</span>(<span class="ty">double</span> r) {
+  <span class="kw">return</span> <span class="nu">2</span> * M_PI * r;
+}
+
+ <span class="ty">std</span>::cout &lt;&lt; <span class="fn">areaRect</span>(<span class="nu">4</span>, <span class="nu">3</span>);
+ <span class="ty">std</span>::cout &lt;&lt; <span class="fn">perimetroRect</span>(<span class="nu">4</span>, <span class="nu">3</span>);`,
+                    oopCode: `<span class="kw">class</span> <span class="ty">Rectangulo</span> {
+  <span class="ty">double</span> base, altura;
+<span class="kw">public</span>:
+<span class="cm">// Métodos y constructor definidos inline (en linea)</span>
+  <span class="fn">Rectangulo</span>(<span class="ty">double</span> b, <span class="ty">double</span> h): base(b), altura(h) {}
+  <span class="ty">double</span> <span class="fn">area</span>()      { <span class="kw">return</span> base * altura; }
+  <span class="ty">double</span> <span class="fn">perimetro</span>() { <span class="kw">return</span> <span class="nu">2</span> * (base+altura); }
+};
+
+<span class="kw">class</span> <span class="ty">Circulo</span> {
+  <span class="ty">double</span> radio;
+<span class="kw">public</span>:
+<span class="cm">// Métodos y constructor solo declarados</span>
+  <span class="fn">Circulo</span>(<span class="ty">double</span> r);
+  <span class="ty">double</span> <span class="fn">area</span>();
+};
+
+<span class="cm">// Métodos y constructor definidos</span>
+<span class="ty">Circulo</span>::<span class="fn">Circulo</span>(<span class="ty">double</span> r) : radio(r) {}
+<span class="ty">double</span> <span class="ty">Circulo</span>::<span class="fn">area</span>() { <span class="kw">return</span> M_PI * radio * radio; }
+`,
+                },
+                {
+                    tag: "Módulo 6",
+                    title: "Objetos en memoria",
+                    desc: "Objetos en stack vs heap. Uso de new y delete. Punteros a objetos y el operador ->",
+                    concepts: [
+                        {
+                            text: "<strong>Stack</strong>: declaración local, destrucción automática al salir del bloque <code>{}</code>.",
+                        },
+                        {
+                            text: "<strong>Heap</strong>: creado con <code>new</code>, devuelve un puntero; debe liberarse con <code>delete</code>.",
+                        },
+                        {
+                            text: "Para acceder a miembros a través de puntero: <code>ptr->metodo()</code> equivale a <code>(*ptr).metodo()</code>.",
+                        },
+                        {
+                            text: "Para arreglos dinámicos de objetos: <code>new Tipo[n]</code> y liberar con <code>delete[]</code>.",
+                        },
+                        {
+                            text: "Ambos estilos de programación tienen las mismas similares en este caso.",
+                        },
+                    ],
+                    diffs: [
+                        {
+                            title1: "Cuidado",
+                            title2: "Seguro",
+                            bad: "Punto* p = new Punto;  // si olvidamos delete → fuga de memoria",
+                            good: "Punto p(1,2);  // stack: destrucción automática garantizada",
+                        },
+                        {
+                            title1: "Cuidado",
+                            title2: "Seguro",
+                            bad: "(*ptr).x  // largo y confuso",
+                            good: "ptr->x    // forma corta para punteros",
+                        },
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "delete ll-&gt;ptr; // Si tenemos punteros internos, tendremos que liberarlos manualmente",
+                            good: "delete ll; // Un buen destructor hara la limpieza por nosotros",
+                        },
+                    ],
+                    structCode: `<span class="cm">// Stack: automático</span>
+{
+  <span class="ty">PuntoStruct</span> p;  <span class="cm">// se destruye al salir del bloque</span>
+  p.x = <span class="nu">1.0</span>; p.y = <span class="nu">2.0</span>;
+}
+
+<span class="cm">// Heap: manual (igual aplica a structs)</span>
+<span class="ty">PuntoStruct</span>* ptr = <span class="kw">new</span> <span class="ty">PuntoStruct</span>();
+(*ptr).x = <span class="nu">1.0</span>; <span class="cm">// Acceso con derreferenciacion</span>
+ptr-&gt;y = <span class="nu">2.0</span>; <span class="cm">// Acceso con el operador "-&gt;"</span>
+<span class="cm">// Ambas formas de acceder son equivalentes</span>
+<span class="kw">delete</span> ptr;   <span class="cm">// OBLIGATORIO</span>
+ptr = <span class="kw">nullptr</span>;   <span class="cm">// buena práctica</span>
+
+<span class="cm">// Arreglo dinámico</span>
+<span class="ty">PuntoStruct</span>* arr = <span class="kw">new</span> <span class="ty">PuntoStruct</span>[<span class="nu">3</span>];
+<span class="kw">delete</span>[] arr;  <span class="cm">// nota: delete[]</span>
+
+<span class="kw">struct</span> <span class="ty">ListaEnlazada</span> {
+  <span class="ty">int*</span> ptr;
+  <span class="ty">int</span> dato;
+};
+<span class="ty">ListaEnlazada</span>* ll = <span class="kw">new</span> <span class="ty">ListaEnlazada</span>();
+ll-&gt;ptr = <span class="kw">new</span> <span class="ty">int</span>();
+
+<span class="kw">delete</span> ll;   <span class="cm">// Fuga de memoria, no se libera ll-&gt;ptr</span>
+<span class="cm">// Hay que eliminar "ptr" por separado</span>
+<span class="cm">// delete ll-&gt;ptr;</span>
+<span class="cm">// delete ll;</span>`,
+                    oopCode: `<span class="cm">// Stack: destructor automático</span>
+{
+  <span class="ty">Punto</span> p(<span class="nu">1.0</span>, <span class="nu">2.0</span>);  <span class="cm">// constructor aquí</span>
+  p.<span class="fn">mostrar</span>();
+}  <span class="cm">// destructor aquí — automático</span>
+
+<span class="cm">// Heap: con new y puntero</span>
+<span class="ty">Punto</span>* ptr = <span class="kw">new</span> <span class="ty">Punto</span>(<span class="nu">3.0</span>, <span class="nu">4.0</span>);
+ptr-&gt;<span class="fn">mostrar</span>();   <span class="cm">// acceso con -></span>
+cout &lt;&lt; ptr-&gt;x;
+<span class="kw">delete</span> ptr; <span class="cm">// OBLIGATORIO (Llama al destructor)</span>
+ptr = <span class="kw">nullptr</span>;   <span class="cm">// buena práctica</span>
+
+<span class="cm">// Arreglo dinámico de objetos</span>
+<span class="ty">Punto</span>* pts = <span class="kw">new</span> <span class="ty">Punto</span>[<span class="nu">3</span>];
+<span class="kw">delete</span>[] pts;
+
+<span class="kw">class</span> <span class="ty">ListaEnlazada</span> {
+<span class="kw">public</span>:
+  <span class="ty">int*</span> ptr;
+  <span class="ty">int</span> dato;
+
+  ~<span class="fn">ListaEnlazada</span>() {
+    <span class="kw">delete</span> ll-&gt;ptr;
+  }
+};
+<span class="ty">ListaEnlazada</span>* ll = <span class="kw">new</span> <span class="ty">ListaEnlazada</span>();
+ll-&gt;ptr = <span class="kw">new</span> <span class="ty">int</span>();
+
+<span class="kw">delete</span> ll;   <span class="cm">// No hay fuga de memoria</span>
+<span class="cm">// Ya definimos un destructor que</span>
+<span class="cm">// se encarga de limpiar los punteros internos</span>`,
+                },
+                {
+                    tag: "Módulo 7",
+                    title: "Diagramas de clase",
+                    desc: "Representación UML básica de clases, atributos, métodos y relaciones simples entre clases.",
+                    concepts: [
+                        {
+                            text: "<code>+</code> en UML = público (public). <code>-</code> = privado (private).",
+                        },
+                        {
+                            text: "Una clase puede <strong>contener</strong> un atributo del tipo de otra clase (composición).",
+                        },
+                        {
+                            text: "En UML la relación <strong>TIENE UN</strong> (composición) se representa con un rombo: ◆",
+                        },
+                        {
+                            text: "Los diagramas ayudan a <strong>planear</strong> la estructura antes de escribir código.",
+                        },
+                    ],
+                    diffs: [
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "// Toda la lógica mezclada en un solo lugar",
+                            good: "// Cada clase tiene su responsabilidad clara",
+                        },
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "es.materia.aprobada = true;  // acceso directo",
+                            good: "est.aprobarMateria();  // delegación entre objetos",
+                        },
+                    ],
+                    structCode: `<span class="kw">struct</span> <span class="ty">MateriaStruct</span> {
+  <span class="ty">std</span>::<span class="ty">string</span> nombre;
+  <span class="ty">int</span>    creditos;
+  <span class="ty">bool</span>   aprobada;
+};
+
+<span class="kw">struct</span> <span class="ty">EstudianteStruct</span> {
+  <span class="ty">std</span>::<span class="ty">string</span>       nombre;
+  <span class="ty">std</span>::<span class="ty">string</span>       matricula;
+  <span class="ty">double</span>       promedio;
+  <span class="ty">MateriaStruct</span> materia;
+};
+
+<span class="cm">// Acceso sin control</span>
+es.materia.aprobada = <span class="kw">true</span>;`,
+                    oopCode: `<span class="kw">class</span> <span class="ty">Materia</span> {
+<span class="kw">private</span>:
+  <span class="ty">std</span>::<span class="ty">string</span> nombre; <span class="ty">int</span> creditos; <span class="ty">bool</span> aprobada;
+<span class="kw">public</span>:
+  <span class="ty">std</span>::<span class="ty">string</span> <span class="fn">getNombre</span>() { <span class="kw">return</span> nombre; }
+  <span class="ty">void</span>   <span class="fn">aprobar</span>()  { aprobada = <span class="kw">true</span>; }
+};
+
+<span class="kw">class</span> <span class="ty">Estudiante</span> {
+<span class="kw">private</span>:
+  <span class="ty">std</span>::<span class="ty">string</span>  nombre;
+  <span class="ty">double</span>  promedio;
+  <span class="ty">Materia</span> materia;  <span class="cm">// TIENE una Materia</span>
+<span class="kw">public</span>:
+  <span class="ty">void</span> <span class="fn">aprobarMateria</span>() {
+    materia.<span class="fn">aprobar</span>();  <span class="cm">// delega al objeto</span>
+  }
+};`,
+                },
+                {
+                    tag: "Módulo 8",
+                    title: "Sobrecarga",
+                    desc: "Sobrecarga de funciones: mismo nombre, distintos parámetros. Sobrecarga de operadores: +, ==, = en una clase Vector2D.",
+                    concepts: [
+                        {
+                            text: "<strong>Sobrecarga de funciones</strong>: mismo nombre, diferente firma (cantidad o tipo de parámetros).",
+                        },
+                        {
+                            text: "<strong>Sobrecarga de operadores</strong>: redefinir <code>+</code>, <code>==</code>, etc. para que trabajen con tus clases.",
+                        },
+                        {
+                            text: "Sintaxis: <code>TipoRetorno operator+(const Tipo& otro) { ... }</code>",
+                        },
+                        {
+                            text: "<code>operator=</code> debe protegerse de auto-asignación (<code>if (this != &amp;otro)</code>) y retornar <code>*this</code>.",
+                        },
+                    ],
+                    diffs: [
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "c = sumarVec(a, b);  // notación artesanal",
+                            good: "c = a + b;  // con operator+ sobrecargado",
+                        },
+                        {
+                            title1: "Estructurada",
+                            title2: "OOP",
+                            bad: "if (iguales(a, b))   // función extra",
+                            good: "if (a == b)  // operator== sobrecargado",
+                        },
+                    ],
+                    structCode: `<span class="kw">struct</span> <span class="ty">Vec2Struct</span> { <span class="ty">double</span> x, y; };
+
+<span class="cm">// Funciones sueltas para cada operación</span>
+<span class="ty">Vec2Struct</span> <span class="fn">sumar</span>(<span class="ty">Vec2Struct</span> a, <span class="ty">Vec2Struct</span> b) {
+  <span class="kw">return</span> {a.x+b.x, a.y+b.y};
+}
+<span class="ty">bool</span> <span class="fn">iguales</span>(<span class="ty">Vec2Struct</span> a, <span class="ty">Vec2Struct</span> b) {
+  <span class="kw">return</span> a.x==b.x &amp;&amp; a.y==b.y;
+}
+
+<span class="ty">Vec2Struct</span> c = <span class="fn">sumar</span>(va, vb);  <span class="cm">// incómodo</span>
+<span class="kw">if</span> (<span class="fn">iguales</span>(va, vb)) ...`,
+                    oopCode: `<span class="kw">class</span> <span class="ty">Vec2</span> {
+<span class="kw">public</span>:
+  <span class="ty">double</span> x, y;
+  <span class="fn">Vec2</span>(<span class="ty">double</span> x=<span class="nu">0</span>, <span class="ty">double</span> y=<span class="nu">0</span>) : x(x), y(y) {}
+
+  <span class="cm">// operator+</span>
+  <span class="ty">Vec2</span> <span class="kw">operator</span>+(<span class="kw">const</span> <span class="ty">Vec2</span>&amp; o) <span class="kw">const</span> {
+    <span class="kw">return</span> <span class="ty">Vec2</span>(x+o.x, y+o.y);
+  }
+  <span class="cm">// operator==</span>
+  <span class="ty">bool</span> <span class="kw">operator</span>==(<span class="kw">const</span> <span class="ty">Vec2</span>&amp; o) <span class="kw">const</span> {
+    <span class="kw">return</span> x==o.x &amp;&amp; y==o.y;
+  }
+  <span class="cm">// operator=</span>
+  <span class="ty">Vec2</span>&amp; <span class="kw">operator</span>=(<span class="kw">const</span> <span class="ty">Vec2</span>&amp; o) {
+    <span class="kw">if</span> (<span class="kw">this</span> != &amp;o) { x=o.x; y=o.y; }
+    <span class="kw">return</span> *<span class="kw">this</span>;
+  }
+};
+
+<span class="ty">Vec2</span> c = a + b;   <span class="cm">// natural!</span>
+<span class="kw">if</span> (a == b) ...  <span class="cm">// legible!</span>`,
+                },
+            ];
+
+            const navEl = document.getElementById("nav-items");
+            const contentEl = document.getElementById("content");
+            let current = 0;
+
+            function buildNav() {
+                navEl.innerHTML = "";
+                modules.forEach((m, i) => {
+                    const el = document.createElement("div");
+                    el.className =
+                        "nav-item" + (i === current ? " active" : "");
+                    el.innerHTML = `<div class="nav-num">${i + 1}</div><div class="nav-text">${m.title}</div>`;
+                    el.onclick = () => {
+                        current = i;
+                        render();
+                    };
+                    navEl.appendChild(el);
+                });
+            }
+
+            function buildUML(uml) {
+                if (!uml) return "";
+                return `<div class="uml-box">
+    <div class="uml-title">${uml.name}</div>
+    <div class="uml-section">
+      ${uml.attrs.map((a) => `<div class="uml-item"><span class="${a.vis === "-" ? "priv" : "pub"}">${a.vis}</span> <span class="name">${a.name}</span> : <span class="type">${a.type}</span></div>`).join("")}
+    </div>
+    <div class="uml-section">
+      ${uml.methods.map((m) => `<div class="uml-item"><span class="${m.vis === "-" ? "priv" : "pub"}">${m.vis}</span> <span class="name">${m.name}</span> : <span class="type">${m.type}</span></div>`).join("")}
+    </div>
+  </div>`;
+            }
+
+            function render() {
+                buildNav();
+                const m = modules[current];
+                const pct = (((current + 1) / modules.length) * 100).toFixed(1);
+                document.getElementById("prog-fill").style.width = pct + "%";
+                document.getElementById("prog-label").textContent =
+                    `${current + 1} / ${modules.length}`;
+
+                let umlHtml = "";
+                if (m.uml) {
+                    umlHtml = `<div style="margin-bottom:1rem;">
+      <div class="key-title" style="margin-bottom:0.5rem;">Diagrama UML</div>
+      <div class="uml-row">${buildUML(m.uml)}</div>
+    </div>`;
+                }
+
+                contentEl.innerHTML = `
+    <div class="module-header">
+      <div class="module-tag">${m.tag}</div>
+      <div class="module-title">${m.title}</div>
+      <div class="module-desc">${m.desc}</div>
+    </div>
+
+    <div class="compare-grid">
+      <div class="pane pane-struct">
+        <div class="pane-header">
+          <div class="pane-badge">Estructurada</div>
+          <div class="pane-label">funciones + structs</div>
+        </div>
+        <div class="pane-body"><pre>${m.structCode}</pre></div>
+      </div>
+      <div class="pane pane-oop">
+        <div class="pane-header">
+          <div class="pane-badge">OOP</div>
+          <div class="pane-label">clase con atributos y métodos</div>
+        </div>
+        <div class="pane-body"><pre>${m.oopCode}</pre></div>
+      </div>
+    </div>
+
+    ${umlHtml}
+
+    <div class="key-concepts">
+      <div class="key-title">Conceptos clave</div>
+      <div class="key-list">
+        ${m.concepts.map((c) => `<div class="key-item"><div class="key-dot"></div><div>${c.text}</div></div>`).join("")}
+      </div>
+    </div>
+
+    <div style="margin-bottom:1rem;">
+      <div class="key-title" style="margin-bottom:0.5rem;">Diferencia en código</div>
+      ${m.diffs
+          .map(
+              (d) => `
+        <div class="diff-row">
+          <div>
+            <div class="diff-label">${d.title1}</div>
+            <div class="diff-cell bad">${d.bad}</div>
+          </div>
+          <div>
+            <div class="diff-label">${d.title2}</div>
+            <div class="diff-cell good">${d.good}</div>
+          </div>
+        </div>
+      `,
+          )
+          .join("")}
+    </div>
+
+    <div class="nav-btns">
+      ${current > 0 ? `<button class="btn btn-outline" onclick="go(-1)">← Anterior</button>` : ""}
+      ${current < modules.length - 1 ? `<button class="btn btn-primary" onclick="go(1)">Siguiente →</button>` : '<button class="btn btn-primary" style="opacity:.5;cursor:default">Completado ✓</button>'}
+    </div>
+  `;
+            }
+
+            function go(dir) {
+                current = Math.max(
+                    0,
+                    Math.min(modules.length - 1, current + dir),
+                );
+                render();
+                contentEl.scrollTo(0, 0);
+            }
+
+            render();
+        </script>
+    </body>
+</html>
